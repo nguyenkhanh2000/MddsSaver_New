@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-HsxMddsSaverRD-8724fd7f-169b-4905-8240-cd106483525a</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MddsSaver.Application.Shared\MddsSaver.Application.Shared.csproj" />
+    <ProjectReference Include="..\MddsSaver.Infrastructure.Shared\MddsSaver.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+</Project>
