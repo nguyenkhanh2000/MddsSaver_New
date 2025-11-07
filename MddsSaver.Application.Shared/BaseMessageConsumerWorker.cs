@@ -120,7 +120,6 @@ namespace MddsSaver.Application.Shared
                             // NACK nếu parse thất bại, không requeue
                             _channel.BasicNack(ea.DeliveryTag, false, false);
                         }
-                        //_channel.BasicAck(ea.DeliveryTag, false);
                     }
                     catch (Exception ex)
                     {
@@ -217,7 +216,12 @@ namespace MddsSaver.Application.Shared
                 var SW = System.Diagnostics.Stopwatch.StartNew();
                 // Chuyển danh sách tin nhắn để DataSaver xử lý
                 var parsedMessages = messagesToProcess.Select(m => m.ParsedMessage).ToList();
-                _dataSaver.SaveBatchAsync(parsedMessages, stoppingToken);
+                await _dataSaver.SaveBatchAsync(parsedMessages, stoppingToken);
+
+                // Bulk insert thành công, ACK toàn bộ batch
+                // Lấy deliveryTag của message cuối cùng trong batch và ACK tất cả message trước đó
+                _channel.BasicAck(messagesToProcess.Last().DeliveryTag, true);
+                _monitor.SendStatusToMonitor(_monitor.GetLocalDateTime(), _monitor.GetLocalIP(), _appSetting.Redis.KeyAppName_Proc, messagesToProcess.Count, SW.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {

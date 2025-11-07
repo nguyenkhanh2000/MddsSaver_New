@@ -19,11 +19,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         // Đăng ký các phần cấu hình con dưới dạng Singleton để dễ dàng inject
         services.AddSingleton(appSettings.RabbitMQ);
         services.AddSingleton(appSettings.Redis);
-        //services.AddSingleton<IConnectionMultiplexer>(sp =>
-        //{
-        //    var settings = sp.GetRequiredService<RedisSettings>();
-        //    return ConnectionMultiplexer.Connect(settings.Endpoint_Fox250);
-        //});
         services.AddInfrastructureServices(configuration);
         // Đăng ký Kafka Logger
         services.AddKafkaLogger(configuration, true);

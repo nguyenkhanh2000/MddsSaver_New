@@ -13,6 +13,7 @@ namespace MddsSaver.Core.Shared.Interfaces
     public interface IMonitor
     {
         //string GetAppName(AppList appList);
+        Task SendStatusToMonitor(string ActiveTime, string strIP, string AppName, int intRowCount, long lngDuration);
         bool SendStatusToMonitor(AppList appList, string statusData);
         string GetLocalDateTime();
         string GetLocalIP();

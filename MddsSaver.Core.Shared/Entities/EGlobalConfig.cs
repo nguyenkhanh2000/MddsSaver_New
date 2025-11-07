@@ -8,6 +8,24 @@ namespace MddsSaver.Core.Shared.Entities
 {
     static public class EGlobalConfig
     {
+        //KL theo thời gian lô chẵn
+        public const string TEMPLATE_REDIS_KEY_LE = "LE:S5G_(Symbol)";       //   LE:S5G_ABT
+        public const string TEMPLATE_REDIS_KEY_LE_TKTT_VOL = "TKTT:VOL:(Symbol):0";
+        public const string TEMPLATE_REDIS_KEY_LE_TKTT_VAL = "TKTT:VAL:(Symbol):0";
+        public const string TEMPLATE_REDIS_KEY_LS = "LS:(Symbol)";
+        
+        public const string TEMPLATE_REDIS_KEY_PT = "PT:SYMBOL:(Symbol):(Board)";
+        public const string TEMPLATE_REDIS_KEY_PT_ALL = "PT:ALL:HSX:KL:(Board)";
+        public const string TEMPLATE_REDIS_KEY_PT_SIDE_B = "PT:ALL:HSX:BUY:(Board)";
+        public const string TEMPLATE_REDIS_KEY_PT_SIDE_S = "PT:ALL:HSX:SELL:(Board)";
+
+        public const string TEMPLATE_JSONC_PO = "{\"T\":\"(T)\",\"S\":\"(S)\",\"BP1\":(BP1),\"BQ1\":(BQ1),\"BP2\":(BP2),\"BQ2\":(BQ2),\"BP3\":(BP3),\"BQ3\":(BQ3),\"SP1\":(SP1),\"SQ1\":(SQ1),\"SP2\":(SP2),\"SQ2\":(SQ2),\"SP3\":(SP3),\"SQ3\":(SQ3)}";    //
+        public const string TEMPLATE_REDIS_KEY_PO = "PO:S5G_(Symbol)";
+
+        public const string TEMPLATE_JSONC_LE = "{\"MT\":\"(MT)\",\"MQ\":(MQ),\"MP\":(MP),\"TQ\":(TQ)}";
+        public const string TEMPLATE_JSONC_LE_TKTT = "{\"MT\":\"(MT)\",\"MP\":(MP),\"TQ\":(TQ),\"TV\":(TV)}";
+        public const string TEMPLATE_JSONC_LS = "{\"MT\":\"(MT)\",\"CN\":(CN),\"MP\":(MP),\"MQ\":(MQ),\"SIDE\":(SIDE)}";
+
         private const string DATETIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss.fff";
         private const string DATETIME_FORMAT_2 = "yyyyMMddHHmmssfff"; // 5G
         private const string DATETIME_FORMAT_3 = "yyyy-MM-dd";
@@ -153,6 +171,7 @@ namespace MddsSaver.Core.Shared.Entities
         public const string __DOMAIN_DSACCOUNT = "http://s70.dsaccount.fpts.com.vn";
         public const string __TEMPLATE_OBJECT_PUBLIC = "{\"Text\":\"(Text)\",\"Code\":\"(Code)\"}";
         public const string __TEMPLATE_OBJECT_PUBLIC_CW = "{\"Text\":\"TEXT_CW\",\"Code\":\"CODE_CW\"}";
+        public const string __TEMPLATE_REDIS_KEY_STOCK_NO_HSX = "Key_StockNo_Saver_HSX";
         public const string __TYPE_MENU_BAR = "bar";
         public const string __TYPE_MENU_ACCOUNT = "account";
         public const string __DATA_NULL = null;
@@ -227,5 +246,6 @@ COMMIT;";
         public const long __INIT_NULL_LONG_HSX = -1;
         public const double __INIT_NULL_DOUBLE_HSX = -1;
         static public string DateNow => DateTime.Now.ToString(__DATETIME_FORMAT_3);
+        public const int intPeriod = 43830; //đủ time cho key sống 1 tháng
     }
 }

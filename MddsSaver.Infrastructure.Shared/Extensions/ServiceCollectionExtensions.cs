@@ -19,27 +19,17 @@ namespace MddsSaver.Infrastructure.Shared.Extensions
         public static IServiceCollection AddInfrastructureServices(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            
-            //var monitorRedisSettings = configuration.GetSection("MonitoringRedis").Get<RedisSettings>();
-            //var monitorMultiplexer = ConnectionMultiplexer.Connect(monitorRedisSettings.PrimaryEndpoint);
-            //services.AddScoped<IMonitoringRedisRepository>(sp =>
-            //    new MonitoringRedisRepository(
-            //        sp.GetRequiredService<ILogger<MonitoringRedisRepository>>(),
-            //        monitorMultiplexer
-            //    ));
-            //services.AddScoped<IMonitor, Monitor>();
-            // 1. Lay setting Redis Fox
+        {            
+            // 1. Lay setting Redis
             var RedisSettings = configuration.GetSection("Redis").Get<RedisSettings>();
 
             var redisSentinel = ConnectionMultiplexer.Connect(RedisSettings.Endpoint_Sentinel);
             services.AddSingleton<IRedisSentinelRepository>(sp =>
             {
-                // Khi ai đó hỏi IDataRedisRepository:
-                // Tạo một DataRedisRepository MỚI và inject CẢ HAI multiplexer vào
                 return new RedisSentinelRepository(
                     sp.GetRequiredService<ILogger<RedisSentinelRepository>>(),
-                    redisSentinel
+                    redisSentinel,
+                    RedisSettings.DatabaseNumber_Sentinel
                 );
             });
 
@@ -49,12 +39,11 @@ namespace MddsSaver.Infrastructure.Shared.Extensions
             // 3. Đăng ký IDataRedisRepository bằng factory
             services.AddSingleton<IRedisRepository>(sp =>
             {
-                // Khi ai đó hỏi IDataRedisRepository:
-                // Tạo một DataRedisRepository MỚI và inject CẢ HAI multiplexer vào
                 return new RedisRepository(
                     sp.GetRequiredService<ILogger<RedisRepository>>(),
                     redisFox_250,   
-                    redisFox_251  
+                    redisFox_251,
+                    RedisSettings.DatabaseNumber_Fox
                 );
             });
             return services;
