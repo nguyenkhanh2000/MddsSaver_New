@@ -1,9 +1,12 @@
-﻿using MddsSaver.Core.Shared.Interfaces;
+﻿using MddsSaver.Core.Shared.Entities;
+using MddsSaver.Core.Shared.Interfaces;
 using MddsSaver.Core.Shared.Models;
 using MddsSaver.Infrastructure.Shared.Services;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Runtime.Intrinsics.X86;
+using System.Text;
 using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MddsSaver.Infrastructure.Shared.Persistence
@@ -248,6 +251,15 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
                             tasks251.Add(batch251.StringSetAsync(ssc.Key, finalValue, TimeSpan.FromMinutes(ssc.Period)));
                             tasks251.Add(batch251.StringSetAsync(backupKey, finalValue, TimeSpan.FromMinutes(ssc.Period)));
                             break;
+                        case SetStringCommand_PO ssc_po:
+                            string ValueAddHeader = this.AddHeaderFooter(ssc_po.Value);
+                            string BackupKey_PO = "BACKUP:" + DateTime.Today.ToString("yyyy:MM:dd:") + ssc_po.Key;
+                            tasks250.Add(batch250.StringSetAsync(ssc_po.Key, ValueAddHeader, TimeSpan.FromMinutes(ssc_po.Period)));
+                            tasks250.Add(batch250.StringSetAsync(BackupKey_PO, ValueAddHeader, TimeSpan.FromMinutes(ssc_po.Period)));
+
+                            tasks251.Add(batch251.StringSetAsync(ssc_po.Key, ValueAddHeader, TimeSpan.FromMinutes(ssc_po.Period)));
+                            tasks251.Add(batch251.StringSetAsync(BackupKey_PO, ValueAddHeader, TimeSpan.FromMinutes(ssc_po.Period)));
+                            break;
                         default:
                             _logger.LogWarning($"Loại command không xác định trong ExecuteBatchAsync: {cmd?.GetType().Name}");
                             break;
@@ -277,6 +289,22 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
                 _logger.LogError(ex, "Lỗi nghiêm trọng khi thực thi ExecuteBatchAsync");
                 // SỬA LỖI NUỐT EXCEPTION (xem mục 2)
                 throw;
+            }
+        }
+        private string AddHeaderFooter(string RedisValue)
+        {
+            StringBuilder sb = new StringBuilder(EGlobalConfig.TEMPLATE_REDIS_VALUE);
+            try
+            {
+                sb = sb.Replace("(Now)", DateTime.Now.ToString(EGlobalConfig.DATETIME_REDIS_VALUE));
+                sb = sb.Replace("(RedisData)", RedisValue);
+                string result = JsonConvert.SerializeObject(sb.ToString());
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "AddHeaderFooter Err");
+                return "[]";
             }
         }
     }

@@ -12,4 +12,10 @@ namespace MddsSaver.Core.Shared.Models
         public string Value { get; set; }
         public int Period { get; set; } 
     }
+    public class SetStringCommand_PO : RedisCommand
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public int Period { get; set; }
+    }
 }

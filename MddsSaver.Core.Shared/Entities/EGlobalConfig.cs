@@ -26,6 +26,8 @@ namespace MddsSaver.Core.Shared.Entities
         public const string TEMPLATE_JSONC_LE_TKTT = "{\"MT\":\"(MT)\",\"MP\":(MP),\"TQ\":(TQ),\"TV\":(TV)}";
         public const string TEMPLATE_JSONC_LS = "{\"MT\":\"(MT)\",\"CN\":(CN),\"MP\":(MP),\"MQ\":(MQ),\"SIDE\":(SIDE)}";
 
+        public const string TEMPLATE_REDIS_VALUE = "{\"Time\":\"(Now)\",\"Data\":[(RedisData)]}";
+
         private const string DATETIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss.fff";
         private const string DATETIME_FORMAT_2 = "yyyyMMddHHmmssfff"; // 5G
         private const string DATETIME_FORMAT_3 = "yyyy-MM-dd";

@@ -25,8 +25,6 @@ namespace MddsSaver.Infrastructure.Shared.Services
         {
             try
             {
-                var SW = System.Diagnostics.Stopwatch.StartNew();
-                int msgCount = messages?.Count ?? 0;
                 // 1. TẠO DANH SÁCH LỆNH
                 var commands = new List<RedisCommand>();
                 var commands_Sentinel = new List<RedisCommand>();
@@ -68,20 +66,16 @@ namespace MddsSaver.Infrastructure.Shared.Services
                         }
                         else if (eP.MarketID == "STO" && (eP.BoardID == "T1" || eP.BoardID == "T4" || eP.BoardID == "T2" || eP.BoardID == "T3" || eP.BoardID == "T6" || eP.BoardID == "R1") /*&& eP.Side != null*/)
                         {
-                            CreatePT_KL(eP, Symbol, eP.BoardID, commands_Sentinel);
-                            CreatePT_AllSide(eP, Symbol, eP.BoardID, commands_Sentinel);
+                            CreatePT_KL(eP, Symbol, eP.BoardID, commands);
+                            CreatePT_AllSide(eP, Symbol, eP.BoardID, commands);
                         }
                     }
                 }
 
                 if (commands.Any())
-                {
                     await _redisRepository.ExecuteBatchAsync(commands);
+                if (commands_Sentinel.Any())
                     await _redisSentinelRepository.ExecuteBatchAsync(commands_Sentinel);
-                }
-                SW.Stop();
-                var elapsedMs = SW.ElapsedMilliseconds;
-                Console.WriteLine($"[SaveBatchAsync] Processed {msgCount} messages | {commands.Count} Redis commands | Time: {elapsedMs} ms");
             }
             catch (Exception ex)
             {
@@ -175,7 +169,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
                 throw ex;
             }
         }
-        private SetStringCommand Create_PO_Command(EPrice eP, string Symbol)
+        private SetStringCommand_PO Create_PO_Command(EPrice eP, string Symbol)
         {
             try
             {
@@ -197,7 +191,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
 
                 string Z_KEY = EGlobalConfig.TEMPLATE_REDIS_KEY_PO
                         .Replace("(Symbol)", Symbol);
-                return new SetStringCommand
+                return new SetStringCommand_PO
                 {
                     Key = Z_KEY,
                     Value = sbJsonC,
@@ -308,81 +302,6 @@ namespace MddsSaver.Infrastructure.Shared.Services
             catch (Exception ex)
             {
                 throw ex;
-            }
-        }
-        private async Task UpdateRedisLE_TKTT2Redis(EPrice eP, string Symbol)
-        {
-            try
-            {
-                LE_TKTT_Model le_tktt = new LE_TKTT_Model();
-                string time = (eP.SendingTime.Split(' ')[1]).Split('.')[0];
-                string strJsonC = "";
-
-                le_tktt.MT = time.ToString();
-                le_tktt.MP = (int)eP.MatchPrice;
-                le_tktt.TQ = eP.TotalVolumeTraded;
-                le_tktt.TV = eP.GrossTradeAmt / 1000000;
-
-                strJsonC = JsonConvert.SerializeObject(le_tktt);
-
-                string Z_KEY_VAL = EGlobalConfig.TEMPLATE_REDIS_KEY_LE_TKTT_VAL.Replace("(Symbol)", Symbol);
-                string Z_KEY_VOL = EGlobalConfig.TEMPLATE_REDIS_KEY_LE_TKTT_VOL.Replace("(Symbol)", Symbol);
-
-                DateTime dtNow = DateTime.Now;
-                DateTime parsedTime = DateTime.ParseExact(time, "HH:mm:ss", null);
-
-                // Gộp thời gian từ parsedTime với ngày hiện tại
-                DateTime fullDateTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day,
-                                                      parsedTime.Hour, parsedTime.Minute, 00, DateTimeKind.Local);
-
-                // Chuyển sang Unix timestamp (milliseconds)
-                long Z_SCORE = new DateTimeOffset(fullDateTime).ToUnixTimeMilliseconds();
-
-                bool result = await _redisRepository.UpdateSortedSetByScoreAsync(Z_KEY_VAL, Z_KEY_VOL, Z_SCORE, strJsonC);
-            }
-            catch(Exception ex)
-            {
-
-            }
-        }
-        private async Task UpdateRedisLS(EPrice eP, string Symbol)
-        {
-            try
-            {
-                string paddedSequence = eP.MsgSeqNum.ToString("D8");
-
-                LS_Model ls_model = new LS_Model();
-                string time = (eP.SendingTime.Split(' ')[1]).Split('.')[0];
-                string strJsonC = "";
-                //Xử lý CN -  Lấy Guid (random)
-                Guid guid = Guid.NewGuid();
-                string guidString = guid.ToString("N"); // Lấy chuỗi không dấu gạch ngang
-                string first10Digits = guidString.Substring(0, 10);
-                // Chuyển đổi 10 ký tự này thành số nguyên long
-                long lsCN = long.Parse(first10Digits.Substring(0, 10), System.Globalization.NumberStyles.HexNumber);
-                // Đảm bảo ls.CN có 10 chữ số bằng cách chia cho 10 nếu cần
-                while (lsCN >= 10000000000)
-                {
-                    lsCN /= 10;
-                }
-                ls_model.SQ = paddedSequence;
-                ls_model.CN = lsCN;
-                ls_model.MT = time.ToString();
-                ls_model.MP = (int)eP.MatchPrice;
-                ls_model.MQ = eP.MatchQuantity;
-                ls_model.TQ = eP.TotalVolumeTraded;
-                ls_model.TV = (long)eP.GrossTradeAmt;
-                ls_model.SIDE = eP.Side ?? string.Empty;
-
-                strJsonC = JsonConvert.SerializeObject(ls_model);
-
-                string Z_KEY = EGlobalConfig.TEMPLATE_REDIS_KEY_LS.Replace("(Symbol)", Symbol);
-                long Z_SCORE = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                await _redisRepository.SortedSetAddAsync(Z_KEY, strJsonC, Z_SCORE);
-            }
-            catch (Exception ex)
-            {
-
             }
         }
         private async Task<string> GetSymbol(string symbol)

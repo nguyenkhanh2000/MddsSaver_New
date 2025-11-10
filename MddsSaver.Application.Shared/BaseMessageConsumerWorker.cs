@@ -221,11 +221,24 @@ namespace MddsSaver.Application.Shared
                 // Bulk insert thành công, ACK toàn bộ batch
                 // Lấy deliveryTag của message cuối cùng trong batch và ACK tất cả message trước đó
                 _channel.BasicAck(messagesToProcess.Last().DeliveryTag, true);
-                _monitor.SendStatusToMonitor(_monitor.GetLocalDateTime(), _monitor.GetLocalIP(), _appSetting.Redis.KeyAppName_Proc, messagesToProcess.Count, SW.ElapsedMilliseconds);
+                await _monitor.SendStatusToMonitor(_monitor.GetLocalDateTime(), _monitor.GetLocalIP(), _appSetting.Redis.KeyAppName_Proc, messagesToProcess.Count, SW.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, $"Lỗi khi thực hiện bulk insert. Bắt đầu NACK {messagesToProcess.Count} tin nhắn.");
+                // Bulk insert thất bại, NACK toàn bộ batch để RabbitMQ re-queue
+                try
+                {
+                    foreach (var msgWrapper in messagesToProcess)
+                    {
+                        // NACK với requeue = true để thử xử lý lại
+                        _channel.BasicNack(msgWrapper.DeliveryTag, false, true);
+                    }
+                }
+                catch (Exception nackEx)
+                {
+                    _logger.LogError(nackEx, "Lỗi khi thực hiện BasicNack.");
+                }
             }
         }
     }
