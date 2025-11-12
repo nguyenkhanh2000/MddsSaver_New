@@ -9,13 +9,13 @@ using System.Diagnostics;
 
 namespace MddsSaver.Infrastructure.Shared.Services
 {
-    public class DataSaver : IDataSaver
+    public class HsxRedisDataSaver : IHsxRedisDataSaver
     {
-        private readonly ILogger<DataSaver> _logger;
+        private readonly ILogger<HsxRedisDataSaver> _logger;
         private readonly IRedisRepository _redisRepository;
         private readonly IRedisSentinelRepository _redisSentinelRepository;
         private Dictionary<string, string> d_dic_stockno = new Dictionary<string, string>();//dic lưu stock no của mess d
-        public DataSaver(ILogger<DataSaver> logger, IRedisRepository redisRepo, IRedisSentinelRepository redisSentinelRep)
+        public HsxRedisDataSaver(ILogger<HsxRedisDataSaver> logger, IRedisRepository redisRepo, IRedisSentinelRepository redisSentinelRep)
         {
             _logger = logger;
             _redisRepository = redisRepo;

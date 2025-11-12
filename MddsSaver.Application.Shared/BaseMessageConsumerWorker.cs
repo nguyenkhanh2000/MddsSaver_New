@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace MddsSaver.Application.Shared
 {
-    public abstract class BaseMessageConsumerWorker : BackgroundService
+    public abstract class BaseMessageConsumerWorker<T> : BackgroundService
     {
-        private readonly ILogger<BaseMessageConsumerWorker> _logger;
+        private readonly ILogger<T> _logger;
         private readonly RabbitMQSetting _queueConfig;
         private readonly AppSetting _appSetting;
         private readonly IMessageParserFactory _parserFactory;
@@ -35,7 +35,7 @@ namespace MddsSaver.Application.Shared
         private readonly TimeSpan _timeWindow;
         public BaseMessageConsumerWorker(
             IServiceScopeFactory scopeFactory,
-            ILogger<BaseMessageConsumerWorker> logger,
+            ILogger<T> logger,
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             Channel<object> channelWriter,

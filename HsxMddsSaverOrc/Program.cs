@@ -5,7 +5,7 @@ using MddsSaver.Application.Shared.Interfaces;
 using MddsSaver.Core.Shared.Interfaces;
 using MddsSaver.Core.Shared.Models;
 using MddsSaver.Infrastructure.Shared.Extensions;
-using StackExchange.Redis;
+using MddsSaver.Infrastructure.Shared.Services;
 using System.Threading.Channels;
 
 IHost host = Host.CreateDefaultBuilder(args)
@@ -17,19 +17,17 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton(appSettings);
         // Đăng ký các phần cấu hình con dưới dạng Singleton để dễ dàng inject
         services.AddSingleton(appSettings.RabbitMQ);
-        services.AddSingleton(appSettings.Redis);
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-        {
-            var settings = sp.GetRequiredService<RedisSettings>();
-            return ConnectionMultiplexer.Connect(settings.Endpoints);
-        });
+        services.AddInfrastructureServices(appSettings);
         // Đăng ký Kafka Logger
         services.AddKafkaLogger(configuration, true);
         services.AddSingleton<IMessageTypeFilter, OracleMessageTypeFilter>();
+        //Đăng ký Monitor (scoped)
+        services.AddSingleton<IMonitor, MonitorMdds>();
         // TẠO HAI CHANNEL RIÊNG BIỆT CHO MỖI SÀN
         services.AddSingleton(provider => Channel.CreateUnbounded<object>(new UnboundedChannelOptions { SingleReader = true }));
         services.AddSingleton<IMessageParserFactory, MessageParserFactory>();
-        services.AddHostedService<HsxMessageConsumerWorker>();
+        services.AddSingleton<IHsxOracleDataSaver, HsxOracleDataSaver>();
+        services.AddHostedService<HsxOracleConsumerWorker>();
     })
     .Build();
 host.EnsureNetworkConnectivity();

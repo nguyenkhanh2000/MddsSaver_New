@@ -5,9 +5,12 @@ using MddsSaver.Infrastructure.Shared.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Oracle.ManagedDataAccess.Client;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,11 +21,11 @@ namespace MddsSaver.Infrastructure.Shared.Extensions
     {
         public static IServiceCollection AddInfrastructureServices(
             this IServiceCollection services,
-            IConfiguration configuration)
-        {            
+            AppSetting appSetting)
+        {
+            // I. PHẦN REDIS
             // 1. Lay setting Redis
-            var RedisSettings = configuration.GetSection("Redis").Get<RedisSettings>();
-
+            var RedisSettings = appSetting.Redis;
             var redisSentinel = ConnectionMultiplexer.Connect(RedisSettings.Endpoint_Sentinel);
             services.AddSingleton<IRedisSentinelRepository>(sp =>
             {
@@ -46,6 +49,10 @@ namespace MddsSaver.Infrastructure.Shared.Extensions
                     RedisSettings.DatabaseNumber_Fox
                 );
             });
+            // II. PHẦN ORACLE
+            var oracleConnectionString = appSetting.ConnectionStrings;
+            services.AddTransient<IDbConnection>(sp => new OracleConnection(oracleConnectionString.Oracle));
+
             return services;
 
         }

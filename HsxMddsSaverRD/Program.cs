@@ -18,8 +18,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton(appSettings);
         // Đăng ký các phần cấu hình con dưới dạng Singleton để dễ dàng inject
         services.AddSingleton(appSettings.RabbitMQ);
-        services.AddSingleton(appSettings.Redis);
-        services.AddInfrastructureServices(configuration);
+        services.AddInfrastructureServices(appSettings);
         // Đăng ký Kafka Logger
         services.AddKafkaLogger(configuration, true);
         services.AddSingleton<IMessageTypeFilter, RedisMessageTypeFilter>();
@@ -28,8 +27,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         // TẠO HAI CHANNEL RIÊNG BIỆT CHO MỖI SÀN
         services.AddSingleton(provider => Channel.CreateUnbounded<object>(new UnboundedChannelOptions { SingleReader = true }));
         services.AddSingleton<IMessageParserFactory, MessageParserFactory>();
-        services.AddSingleton<IDataSaver, DataSaver>();
-        services.AddHostedService<HsxMessageConsumerWorker>();
+        services.AddSingleton<IHsxRedisDataSaver, HsxRedisDataSaver>();
+        services.AddHostedService<HsxRedisConsumerWorker>();
     })
     .Build();
 host.EnsureNetworkConnectivity();

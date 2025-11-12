@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace HsxMddsSaverRD.BackgroundTasks
 {
-    public class HsxMessageConsumerWorker : BaseMessageConsumerWorker
+    public class HsxRedisConsumerWorker : BaseMessageConsumerWorker<HsxRedisConsumerWorker>
     {
-        public HsxMessageConsumerWorker(
+        public HsxRedisConsumerWorker(
             IServiceScopeFactory scopeFactory,
-            ILogger<HsxMessageConsumerWorker> logger,
+            ILogger<HsxRedisConsumerWorker> logger,
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             IServiceProvider serviceProvider,
-            IDataSaver dataSaver,
+            IHsxRedisDataSaver dataSaver,
             IMessageTypeFilter msgFilter,
             IMonitor monitor
             ) : base(

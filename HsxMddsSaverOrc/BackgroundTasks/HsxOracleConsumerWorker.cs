@@ -12,26 +12,26 @@ using System.Threading.Tasks;
 
 namespace HsxMddsSaverOrc.BackgroundTasks
 {
-    public class HsxMessageConsumerWorker : BaseMessageConsumerWorker
+    public class HsxOracleConsumerWorker : BaseMessageConsumerWorker<HsxOracleConsumerWorker>
     {
-        public HsxMessageConsumerWorker(
+        public HsxOracleConsumerWorker(
             IServiceScopeFactory scopeFactory,
-            ILogger<HsxMessageConsumerWorker> logger,
+            ILogger<HsxOracleConsumerWorker> logger,
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             IServiceProvider serviceProvider,
-            IConnectionMultiplexer redis,
-            IDataSaver dataSaver,
-            IMessageTypeFilter msgFilter
+            IHsxOracleDataSaver dataSaver,
+            IMessageTypeFilter msgFilter,
+            IMonitor monitor
             ) : base(
                 scopeFactory,
                 logger,
                 appsetting,
                 parserFactory,
                 serviceProvider.GetServices<Channel<object>>().First(),
-                redis,
                 dataSaver,
-                msgFilter
+                msgFilter,
+                monitor
                 )
         {
 
