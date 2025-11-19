@@ -312,8 +312,6 @@ namespace MddsSaver.Application.Shared.Common
                     }
                 }
             }
-
-
             return eBP;
         }
         public EPriceRecovery Fix_Fix2EPriceRecovery(string rawData, bool readAllTags = false, int priceDividedBy = 1, int priceRoundDigitsCount = 2, int massDividedBy = 1)

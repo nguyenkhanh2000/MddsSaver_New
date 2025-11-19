@@ -14,9 +14,5 @@ namespace MddsSaver.Core.Shared.Models
         {
             return configuration.Get<ConnectionString>();
         }
-        //public static RedisSettings MapValue(IConfiguration configuration)
-        //{
-        //    return configuration.Get<RedisSettings>();
-        //}
     }
 }
