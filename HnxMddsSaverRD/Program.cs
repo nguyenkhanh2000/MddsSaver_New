@@ -26,7 +26,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         // TẠO HAI CHANNEL RIÊNG BIỆT CHO MỖI SÀN
         services.AddSingleton(provider => Channel.CreateUnbounded<object>(new UnboundedChannelOptions { SingleReader = true }));
         services.AddSingleton<IMessageParserFactory, MessageParserFactory>();
-        services.AddSingleton<IHsxRedisDataSaver, HsxRedisDataSaver>();
+        services.AddSingleton<IDataSaver, RedisDataSaver>();
         services.AddHostedService<HnxRedisConsumerWorker>();
     })
     .Build();

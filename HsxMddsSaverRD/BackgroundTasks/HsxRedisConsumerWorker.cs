@@ -20,7 +20,7 @@ namespace HsxMddsSaverRD.BackgroundTasks
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             IServiceProvider serviceProvider,
-            IHsxRedisDataSaver dataSaver,
+            IDataSaver dataSaver,
             IMessageTypeFilter msgFilter,
             IMonitor monitor
             ) : base(

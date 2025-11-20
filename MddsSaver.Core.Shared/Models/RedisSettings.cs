@@ -15,7 +15,8 @@ namespace MddsSaver.Core.Shared.Models
         public string KeyAppName_Consume { get; set; }
         public string KeyAppName_Proc    { get; set; }
         public int DatabaseNumber_Fox { get; set; }
-        public int DatabaseNumber_Sentinel {  get; set; }   
+        public int DatabaseNumber_Sentinel {  get; set; }
+        public string Key_StockNo { get; set; }
         public static RedisSettings MapValue(IConfiguration configuration)
         {
             return configuration.Get<RedisSettings>();
