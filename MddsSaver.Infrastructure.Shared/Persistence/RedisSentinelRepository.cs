@@ -15,34 +15,6 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
             _logger = logger;
             _redisSentinel = redisSentinel.GetDatabase(databaseNumber);
         }
-        //public async Task<bool> SaveAsync(string key, string data, TimeSpan? expiry = null)
-        //{
-        //    string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-        //    var wrappedData = new
-        //    {
-        //        Time = currentTime,
-        //        Data = JsonConvert.DeserializeObject<object>(data)
-        //    };
-        //    string finalValue = JsonConvert.SerializeObject(wrappedData);
-
-        //    string backupKey = "BACKUP:" + DateTime.Today.ToString("yyyy:MM:dd:") + key;
-        //    try
-        //    {
-        //        var taskP1 = _redisFox_250.StringSetAsync(key, finalValue, expiry);
-        //        var taskP2 = _redisFox_250.StringSetAsync(backupKey, finalValue, expiry);
-        //        var taskS1 = _redisFox_251.StringSetAsync(key, finalValue, expiry);
-        //        var taskS2 = _redisFox_251.StringSetAsync(backupKey, finalValue, expiry);
-
-        //        await Task.WhenAll(taskP1, taskP2, taskS1, taskS2);
-
-        //        return taskP1.Result && taskP2.Result && taskS1.Result && taskS2.Result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Lỗi khi dual-write vào Redis (Key: {RedisKey})", key);
-        //        return false;
-        //    }
-        //}
         public async Task<bool> ExecuteBatchAsync(IEnumerable<RedisCommand> commands)
         {
             if (commands == null || !commands.Any())
@@ -105,7 +77,6 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Lỗi nghiêm trọng khi thực thi ExecuteBatchAsync");
-                // SỬA LỖI NUỐT EXCEPTION (xem mục 2)
                 throw;
             }
         }

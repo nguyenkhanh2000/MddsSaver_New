@@ -287,7 +287,6 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Lỗi nghiêm trọng khi thực thi ExecuteBatchAsync");
-                // SỬA LỖI NUỐT EXCEPTION (xem mục 2)
                 throw;
             }
         }

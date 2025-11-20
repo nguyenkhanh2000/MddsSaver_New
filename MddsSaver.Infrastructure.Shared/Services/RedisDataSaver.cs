@@ -108,14 +108,14 @@ namespace MddsSaver.Infrastructure.Shared.Services
                 {
                     lsCN /= 10;
                 }
-                ls_model.SQ = paddedSequence;
-                ls_model.CN = lsCN;
-                ls_model.MT = time.ToString();
-                ls_model.MQ = eP.MatchQuantity;
-                ls_model.TQ = eP.TotalVolumeTraded;
-                ls_model.TV = (long)eP.GrossTradeAmt;
+                ls_model.SQ   = paddedSequence;
+                ls_model.CN   = lsCN;
+                ls_model.MT   = time.ToString();
+                ls_model.MQ   = eP.MatchQuantity;
+                ls_model.TQ   = eP.TotalVolumeTraded;
+                ls_model.TV   = (long)eP.GrossTradeAmt;
                 ls_model.SIDE = eP.Side ?? string.Empty;
-                ls_model.MP = (int)eP.MatchPrice;
+                ls_model.MP   = (int)eP.MatchPrice;
 
                 bool checkDI = string.Equals(eP.MarketID, "DVX", StringComparison.OrdinalIgnoreCase);
                 if (checkDI) 
