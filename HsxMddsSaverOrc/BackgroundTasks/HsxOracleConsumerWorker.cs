@@ -20,7 +20,7 @@ namespace HsxMddsSaverOrc.BackgroundTasks
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             IServiceProvider serviceProvider,
-            IHsxOracleDataSaver dataSaver,
+            IDataSaver dataSaver,
             IMessageTypeFilter msgFilter,
             IMonitor monitor
             ) : base(
@@ -36,5 +36,6 @@ namespace HsxMddsSaverOrc.BackgroundTasks
         {
 
         }
+        protected override string GetSourceIdentifier() => "Oracle_Hsx";
     }
 }

@@ -2,7 +2,6 @@
 using MddsSaver.Application.Shared.Interfaces;
 using MddsSaver.Core.Shared.Interfaces;
 using MddsSaver.Core.Shared.Models;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +9,17 @@ using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace HsxMddsSaverRD.BackgroundTasks
+namespace HnxMddsSaverOrc.BackgroundTasks
 {
-    public class HsxRedisConsumerWorker : BaseMessageConsumerWorker<HsxRedisConsumerWorker>
+    public class HnxOracleConsumerWorker : BaseMessageConsumerWorker<HnxOracleConsumerWorker>
     {
-        public HsxRedisConsumerWorker(
+        public HnxOracleConsumerWorker(
             IServiceScopeFactory scopeFactory,
-            ILogger<HsxRedisConsumerWorker> logger,
+            ILogger<HnxOracleConsumerWorker> logger,
             AppSetting appsetting,
             IMessageParserFactory parserFactory,
             IServiceProvider serviceProvider,
-            IHsxRedisDataSaver dataSaver,
+            IDataSaver dataSaver,
             IMessageTypeFilter msgFilter,
             IMonitor monitor
             ) : base(
@@ -36,6 +35,6 @@ namespace HsxMddsSaverRD.BackgroundTasks
         {
 
         }
-        protected override string GetSourceIdentifier() => "Redis_Hsx";
+        protected override string GetSourceIdentifier() => "Oracle_Hnx";
     }
 }

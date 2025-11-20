@@ -15,17 +15,17 @@ using System.Threading.Tasks;
 
 namespace MddsSaver.Infrastructure.Shared.Services
 {
-    public class HsxOracleDataSaver : IHsxOracleDataSaver
+    public class GeneralOracleDataSaver : IDataSaver
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<HsxOracleDataSaver> _logger;
+        private readonly ILogger<GeneralOracleDataSaver> _logger;
 
-        public HsxOracleDataSaver(IServiceProvider serviceProvider, ILogger<HsxOracleDataSaver> logger)
+        public GeneralOracleDataSaver(IServiceProvider serviceProvider, ILogger<GeneralOracleDataSaver> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
         }
-        public async Task SaveBatchAsync(List<object> messages, CancellationToken stoppingToken)
+        public async Task SaveBatchAsync(List<object> messages, string sourceIdentifier, CancellationToken stoppingToken)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "SaveBatchAsync: Lỗi khi thực hiện bulk insert!");
+                _logger.LogError(ex, $"[{sourceIdentifier}] SaveBatchAsync: Lỗi khi thực hiện bulk insert!");
                 // Ném lại exception để hàm gọi có thể xử lý (NACK messages)
                 throw;
             }
@@ -3099,7 +3099,6 @@ namespace MddsSaver.Infrastructure.Shared.Services
             dt.Columns.Add(BaseMessageSchema.MsgSeqNum, typeof(long));
             dt.Columns.Add(BaseMessageSchema.SendingTime, typeof(DateTime));
             dt.Columns.Add(BaseMessageSchema.MarketId, typeof(string));
-            // (Bảng này không dùng 'boardid' từ Base)
 
             // Payload (từ MsgMMSchema)
             dt.Columns.Add(MsgMMSchema.Symbol, typeof(string));

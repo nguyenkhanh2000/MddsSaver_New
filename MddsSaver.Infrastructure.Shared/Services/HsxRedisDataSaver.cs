@@ -21,7 +21,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             _redisRepository = redisRepo;
             _redisSentinelRepository = redisSentinelRep;
         }
-        public async Task SaveBatchAsync(List<object> messages, CancellationToken stoppingToken)
+        public async Task SaveBatchAsync(List<object> messages, string sourceIdentifier, CancellationToken stoppingToken)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "SaveBatchAsync: Lỗi khi thực hiện bulk insert!");
+                _logger.LogError(ex, $"[{sourceIdentifier}] SaveBatchAsync: Lỗi khi thực hiện bulk insert!");
                 // Ném lại exception để hàm gọi có thể xử lý (NACK messages)
                 throw;
             }

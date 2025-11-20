@@ -10,4 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MddsSaver.Application.Shared\MddsSaver.Application.Shared.csproj" />
+    <ProjectReference Include="..\MddsSaver.Infrastructure.Shared\MddsSaver.Infrastructure.Shared.csproj" />
+  </ItemGroup>
 </Project>

@@ -8,6 +8,6 @@ namespace MddsSaver.Core.Shared.Interfaces
 {
     public interface IDataSaver
     {
-        Task SaveBatchAsync(List<object> messages, CancellationToken stoppingToken);
+        Task SaveBatchAsync(List<object> messages, string sourceIdentifier, CancellationToken stoppingToken);
     }
 }

@@ -33,6 +33,7 @@ namespace MddsSaver.Application.Shared
         //cau hinh batching
         private readonly int _batchSize;
         private readonly TimeSpan _timeWindow;
+        protected abstract string GetSourceIdentifier();
         public BaseMessageConsumerWorker(
             IServiceScopeFactory scopeFactory,
             ILogger<T> logger,
@@ -216,7 +217,7 @@ namespace MddsSaver.Application.Shared
                 var SW = System.Diagnostics.Stopwatch.StartNew();
                 // Chuyển danh sách tin nhắn để DataSaver xử lý
                 var parsedMessages = messagesToProcess.Select(m => m.ParsedMessage).ToList();
-                await _dataSaver.SaveBatchAsync(parsedMessages, stoppingToken);
+                await _dataSaver.SaveBatchAsync(parsedMessages, GetSourceIdentifier(), stoppingToken);
 
                 // Bulk insert thành công, ACK toàn bộ batch
                 // Lấy deliveryTag của message cuối cùng trong batch và ACK tất cả message trước đó
