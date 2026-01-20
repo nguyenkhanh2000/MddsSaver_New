@@ -1,14 +1,10 @@
 ﻿using MddsSaver.Core.Shared.Entities;
 using MddsSaver.Core.Shared.Interfaces;
 using MddsSaver.Core.Shared.Models;
-using MddsSaver.Infrastructure.Shared.Services;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
-using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MddsSaver.Infrastructure.Shared.Persistence
 {
     public class RedisRepository : IRedisRepository
@@ -53,41 +49,6 @@ namespace MddsSaver.Infrastructure.Shared.Persistence
                 return false;
             }
         } 
-        // 2. LOGIC ĐỌC (FAILOVER-READ)
-        //public async Task<T> GetAsync<T>(string key)
-        //{
-        //    RedisValue redisValue = RedisValue.Null;
-        //    try
-        //    {
-        //        // Thử đọc ở Primary trước
-        //        redisValue = await _redisFox_250.StringGetAsync(key);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogWarning(ex, "Lỗi khi GetAsync từ Primary Redis (Key: {RedisKey}). Thử Secondary...", key);
-        //    }
-
-        //    // Nếu Primary không có hoặc lỗi -> Thử Secondary
-        //    if (redisValue.IsNullOrEmpty)
-        //    {
-        //        try
-        //        {
-        //            redisValue = await _redisFox_251.StringGetAsync(key);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError(ex, "Lỗi khi GetAsync từ Secondary Redis (Key: {RedisKey})", key);
-        //            return default(T);
-        //        }
-        //    }
-
-        //    if (redisValue.IsNullOrEmpty)
-        //    {
-        //        return default(T); // Không tìm thấy ở cả 2
-        //    }
-
-        //    return JsonSerializer.Deserialize<T>(redisValue);
-        //}
 
         // 3. LOGIC XÓA (DUAL-DELETE)
         public async Task<bool> DeleteAsync(string key)

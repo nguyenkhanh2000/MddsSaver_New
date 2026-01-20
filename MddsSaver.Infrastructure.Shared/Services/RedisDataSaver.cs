@@ -148,6 +148,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Create_LS_Command error !");
                 throw ex;
             }
         }
@@ -203,6 +204,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Create_LE_TKTT_Command error!");
                 throw ex;
             }
         }
@@ -237,6 +239,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Create_PO_Command error!");
                 throw ex;
             }
         }
@@ -286,6 +289,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"CreatePT_KL error !");
                 throw ex;
             }
         }
@@ -338,6 +342,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"CreatePT_AllSide error !");
                 throw ex;
             }
         }
