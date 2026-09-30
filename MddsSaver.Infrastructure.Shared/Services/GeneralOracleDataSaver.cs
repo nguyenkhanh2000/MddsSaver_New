@@ -19,7 +19,7 @@ namespace MddsSaver.Infrastructure.Shared.Services
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<GeneralOracleDataSaver> _logger;
-
+        private const int MaxParallelBulkInserts = 4;
         public GeneralOracleDataSaver(IServiceProvider serviceProvider, ILogger<GeneralOracleDataSaver> logger)
         {
             _serviceProvider = serviceProvider;
@@ -29,18 +29,19 @@ namespace MddsSaver.Infrastructure.Shared.Services
         {
             try
             {
-                // 1. Nhóm các msg theo type
                 var groupedMessages = messages
                     .Where(m => m != null)
                     .GroupBy(m => m.GetType());
-                // Tạo danh sách các Task để chạy song song
+
+                using var semaphore = new SemaphoreSlim(MaxParallelBulkInserts);
+
                 var allTasks = new List<Task>();
+
                 foreach (var group in groupedMessages)
                 {
                     var type = group.Key;
-                    var items = group.ToList(); // 'items' là List<object>
+                    var items = group.ToList();
 
-                    // Gọi các hàm private tương ứng
                     Task insertTask = type switch
                     {
                         var t when t == typeof(ESecurityDefinition) =>
@@ -130,19 +131,34 @@ namespace MddsSaver.Infrastructure.Shared.Services
                         var t when t == typeof(EPriceLimitExpansion) =>
                             BulkInsertPriceLimitExpansionAsync(items.Cast<EPriceLimitExpansion>().ToList(), stoppingToken),
 
-                        _ => Task.CompletedTask // Bỏ qua các type không xác định
+                        _ => Task.CompletedTask
                     };
-                    allTasks.Add(insertTask);
+
+                    allTasks.Add(RunWithSemaphoreAsync(insertTask, semaphore, stoppingToken));
                 }
 
-                // Chờ tất cả các hoạt động bulk insert hoàn tất
                 await Task.WhenAll(allTasks);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"[{sourceIdentifier}] SaveBatchAsync: Lỗi khi thực hiện bulk insert!");
-                // Ném lại exception để hàm gọi có thể xử lý (NACK messages)
                 throw;
+            }
+        }
+
+        private static async Task RunWithSemaphoreAsync(
+            Task insertTask,
+            SemaphoreSlim semaphore,
+            CancellationToken cancellationToken)
+        {
+            await semaphore.WaitAsync(cancellationToken);
+            try
+            {
+                await insertTask;
+            }
+            finally
+            {
+                semaphore.Release();
             }
         }
         private async Task BulkInsertSecurityDefinitionsAsync(List<ESecurityDefinition> definitions, CancellationToken stoppingToken)
