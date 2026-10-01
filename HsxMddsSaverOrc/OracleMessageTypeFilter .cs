@@ -9,6 +9,7 @@ namespace HsxMddsSaverOrc
 {
     public sealed class OracleMessageTypeFilter : IMessageTypeFilter
     {
-        public bool Accept(string msgType) => true;
+        public bool Accept(string msgType)
+            => !string.Equals(msgType, "MV", StringComparison.OrdinalIgnoreCase);
     }
 }
